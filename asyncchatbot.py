@@ -2,20 +2,23 @@ from twitchio.ext import commands
 import time
 import aiohttp
 import ast
-
+import os
 
 async def fetch(session, url):
     async with session.get(url) as response:
         return await response.text()
 
 unlocked = False
+twitchtoken = os.environ.get('TWITCHTOKEN')
+twitchusername = os.environ.get('TWITCHUSERNAME')
+twitchchannel = os.environ.get('TWITCHCHANNEL')
 
 
 class Bot(commands.Bot):
 
     def __init__(self):
-        super().__init__(irc_token='<Twitch Token>', nick='MarketMayhem', prefix='!',
-                         initial_channels=['wallstreetbooyah'])
+        super().__init__(irc_token=twitchtoken, nick=twitchusername, prefix='!',
+                         initial_channels=[twitchchannel])
 
     # Events don't need decorators when subclassed
     async def event_ready(self):

@@ -1,7 +1,9 @@
 from iexfinance.stocks import Stock
 import redismanager
 from main import normalize_data
-token = "<IEX Token Here>"
+import os
+iextoken = os.environ.get('IEXTOKEN')
+token = iextoken
 
 
 def get_quote(ticker):

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+    <head>
+    <meta http-equiv="refresh" content="30"/>
+    <link rel="stylesheet" href="/static/styles.css"/>
+    </head>
+<html>
+
+    <table class="container">
+        <thead>
+        <tr>
+            <th class="text-left">Shares</th>
+            <th class="text-left">Quantity</th>
+            <th class="text-left">Value</th>
+        </tr>
+        </thead>
+        <tbody class="table-hover">
+        <tr>
+            <td class="text-left">Total Account Value</td>
+            <td class="text-left">-</td>
+            <td class="text-left">{{ "${:,.2f}".format(total) }}</td>
+        </tr>
+        <tr>
+            <td class="text-left">Cash</td>
+            <td class="text-left">-</td>
+            <td class="text-left">{{ "${:,.2f}".format(cash) }}</td>
+        </tr>
+        {% for share in shares %}
+            <tr>
+                <td class="text-left">${{ share[0] | upper }}</td>
+                <td class="text-left">{{( '%i' | format(share[1])) }}</td>
+                <td class="text-left">{{ "${:,.2f}".format(sharevalues[loop.index-1][1] * share[1]) }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+<br />
+</html>

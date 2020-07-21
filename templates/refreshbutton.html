@@ -1,0 +1,12 @@
+<script type=text/javascript>
+        $(function() {
+          $('a#test').bind('click', function() {
+            $.getJSON('/api/update_scores',
+                function(data) {
+              location.reload();
+            });
+            return false;
+          });
+        });
+</script>
+<div class="button_cont" align="center"><a id=test class="score_button" href=#><b>Refresh Scores Manually</b> <br />  (Balances Automatically Every 60 Seconds) <br /> (Stock Prices Cached on Latest Transaction and Every 5 Minutes) </a></div>

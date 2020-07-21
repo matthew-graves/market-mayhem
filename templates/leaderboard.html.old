@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+    <head>
+    <meta http-equiv="refresh" content="60"/>
+    <link rel="stylesheet" href="/static/styles.css"/>
+    </head>
+<html>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <table class="table-fill">
+        <thead>
+        <tr>
+            <th class="text-left">Ranking</th>
+            <th class="text-left">Username</th>
+            <th class="text-left">Balance</th>
+        </tr>
+        </thead>
+        <tbody class="table-hover">
+        {% for leader in leaders %}
+            <tr>
+                <td class="text-left">{{ loop.index }}</td>
+                <td class="text-left">{{ leader[0] }}</td>
+                <td class="text-left">{{ "${:,.2f}".format(leader[1]) }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+<br />
+<div />
+</html>

@@ -1,13 +1,14 @@
 from iexfinance.stocks import Stock
 import redismanager
 from main import normalize_data
-import os
-iextoken = os.environ.get('IEXTOKEN')
-token = iextoken
 
+"""
+The official docs recommend using environment variable IEX_TOKEN
+https://addisonlynch.github.io/iexfinance/stable/configuration.html#config-auth
+"""
 
 def get_quote(ticker):
-    stonk = Stock(ticker, token=token)
+    stonk = Stock(ticker)
     return stonk.get_price()
 
 def trade_fee(cost):
@@ -59,5 +60,3 @@ def update_stock_prices():
     for stock in stocks:
         currentprice = get_quote(stock[0])
         redismanager.update_stock_cache_price(stock[0], currentprice)
-
-

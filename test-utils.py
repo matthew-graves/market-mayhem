@@ -45,6 +45,3 @@ def seed_stocks(usercount):
 
 # seed_database(10000)
 # seed_stocks(1000)
-
-
-

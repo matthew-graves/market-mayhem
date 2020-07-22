@@ -6,11 +6,11 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.requests import Request
 import trademanager
+import os
 
 app = FastAPI(openapi_url=None)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
-
 
 def normalize_data(redisarray):
     processedarray = []
@@ -25,6 +25,7 @@ async def users(request: Request, username: str):
     try:
         return redismanager.get_user_cash_balance(username)
     except Exception as e:
+        print(e)
         return templates.TemplateResponse("error.html", {"error": e, "request": request})
 
 
@@ -110,6 +111,7 @@ async def users(request: Request, ticker: str, amount: int, username: str):
         else:
             return "Insufficient Funds (that happened last time!?!?)"
     except Exception as e:
+        print(e)
         return "An error occurred processing your request, please validate that you entered a valid ticker"
         # return templates.TemplateResponse("error.html", {"error": e, "request": request})
 
@@ -137,6 +139,7 @@ async def users(request: Request, ticker: str, amount: int, username: str):
         else:
             return "You do not have " + str(amount) + " shares of $" + ticker + " to sell"
     except Exception as e:
+        print(e)
         return templates.TemplateResponse("error.html", {"error": e, "request": request})
 
 
@@ -146,6 +149,7 @@ async def users(request: Request, username: str):
     try:
         return redismanager.get_ranking(username)
     except Exception as e:
+        print(e)
         return templates.TemplateResponse("error.html", {"error": e, "request": request})
 
 
@@ -155,6 +159,7 @@ async def users(request: Request, username: str, balancemod: float):
     try:
         return redismanager.mod_user_balance(username, balancemod)
     except Exception as e:
+        print(e)
         return templates.TemplateResponse("error.html", {"error": e, "request": request})
 
 
@@ -165,6 +170,7 @@ async def generate_leaderboard(request: Request, leaders: int):
         processedleaders = normalize_data(leaders)
         return templates.TemplateResponse("leaderboard.html", {"leaders": processedleaders, "request": request})
     except Exception as e:
+        print(e)
         return templates.TemplateResponse("error.html", {"error": e, "request": request})
 
 @app.get("/")
@@ -174,7 +180,11 @@ async def generate_leaderboard(request: Request):
         processedleaders = normalize_data(leaders)
         return templates.TemplateResponse("leaderboard.html", {"leaders": processedleaders, "request": request})
     except Exception as e:
+        print(e)
         return templates.TemplateResponse("error.html", {"error": e, "request": request})
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.getenv('APP_PORT', '8000'))
+    host = os.getenv('APP_HOST', '0.0.0.0')
+
+    uvicorn.run(app, host=host, port=port)

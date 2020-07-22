@@ -1,11 +1,10 @@
 from usermanager import User, create_user
 import redis
 import pickle
-
+import os
 
 class RedisGenericException(Exception):
     pass
-
 
 def get_ranking(username):
     validate_online()
@@ -100,24 +99,6 @@ def trade_fee():
     return r.zincrby("stats", 2, "tradefees")
 
 
-def validate_online():
-    try:
-        r.ping()
-    except Exception as e:
-        try:
-            redis.Redis(host='localhost')
-            return establish_connection()
-        except Exception as e:
-            raise RedisGenericException("Database Is Offline")
-
-
-def establish_connection():
-    global r
-    r = redis.Redis(host='localhost')
-    r.config_set("save", "600 1")
-    return r
-
-
 def get_stock_price_cache():
     validate_online()
     shares = r.zrange("stockprices", 0, -1, withscores=True)
@@ -170,4 +151,33 @@ def get_usage_stats():
     return r.zrange("stats", 0, -1, withscores=True)
 
 
+# Private functions
+
+def validate_online():
+    global r
+
+    if r is None:
+        return establish_connection()
+
+    try:
+        r.ping()
+        return r
+    except Exception as e:
+        try:
+            open_redis_with_env()
+            return establish_connection()
+        except Exception as e:
+            raise RedisGenericException("Database Is Offline")
+
+def open_redis_with_env():
+    host = os.getenv('REDIS_HOST', 'localhost')
+    return redis.Redis(host=host)
+
+def establish_connection():
+    global r
+    r = open_redis_with_env()
+    r.config_set("save", "600 1")
+    return r
+
+r = None
 r = validate_online()

@@ -11,11 +11,9 @@
 
 	  gtag('config', 'UA-146418431-3');
 	</script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-
-    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     </head>
+
 <html>
 
     <table class="container">
@@ -26,12 +24,12 @@
             <th class="text-left">Balance</th>
         </tr>
         </thead>
-        <tbody class="table-hover" id="leader-table">
-        {% for leader in leaders %}
+        <tbody class="table-hover">
+        {% for loser in losers %}
             <tr>
                 <td class="text-left">{{ loop.index }}</td>
-                <td class="text-left"><a href="https://marketmayhem.io/users/{{ leader[0] }}">{{ leader[0] }}</a></td>
-                <td class="text-left">{{ "${:,.2f}".format(leader[1]) }}</td>
+                <td class="text-left"><a href="https://marketmayhem.io/users/{{ loser[0] }}">{{ loser[0] }}</a></td>
+                <td class="text-left">{{ "${:,.2f}".format(loser[1]) }}</td>
             </tr>
         {% endfor %}
         </tbody>

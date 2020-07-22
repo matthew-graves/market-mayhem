@@ -3,8 +3,10 @@ import redis
 import pickle
 import os
 
+
 class RedisGenericException(Exception):
     pass
+
 
 def get_ranking(username):
     validate_online()
@@ -92,6 +94,11 @@ def get_users(users):
 def get_leaders(leaders):
     validate_online()
     return r.zrevrange("accountvalue", 0, leaders, withscores=True)
+
+
+def get_losers(losers):
+    validate_online()
+    return r.zrange("accountvalue", 0, losers, withscores=True)
 
 
 def trade_fee():

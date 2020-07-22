@@ -12,6 +12,7 @@ app = FastAPI(openapi_url=None)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
+
 def normalize_data(redisarray):
     processedarray = []
     for item in redisarray:
@@ -153,14 +154,14 @@ async def users(request: Request, username: str):
         return templates.TemplateResponse("error.html", {"error": e, "request": request})
 
 
-@app.get("/api/balance/{username}/{balancemod}")
-async def users(request: Request, username: str, balancemod: float):
-    username = username.upper()
-    try:
-        return redismanager.mod_user_balance(username, balancemod)
-    except Exception as e:
-        print(e)
-        return templates.TemplateResponse("error.html", {"error": e, "request": request})
+# @app.get("/api/balance/{username}/{balancemod}")
+# async def users(request: Request, username: str, balancemod: float):
+#     username = username.upper()
+#     try:
+#         return redismanager.mod_user_balance(username, balancemod)
+#     except Exception as e:
+#         print(e)
+#         return templates.TemplateResponse("error.html", {"error": e, "request": request})
 
 
 @app.get("/top/{leaders}")
@@ -173,12 +174,24 @@ async def generate_leaderboard(request: Request, leaders: int):
         print(e)
         return templates.TemplateResponse("error.html", {"error": e, "request": request})
 
-@app.get("/")
-async def generate_leaderboard(request: Request):
+
+@app.get("/bottom/{losers}")
+async def generate_loserboard(request: Request, losers: int):
     try:
-        leaders = redismanager.get_leaders(24)
+        losers = redismanager.get_losers(int(losers) - 1)
+        processedlosers = normalize_data(losers)
+        return templates.TemplateResponse("loserboard.html", {"losers": processedlosers, "request": request})
+    except Exception as e:
+        print(e)
+        return templates.TemplateResponse("error.html", {"error": e, "request": request})
+
+
+@app.get("/")
+async def home_page(request: Request):
+    try:
+        leaders = redismanager.get_leaders(-1)
         processedleaders = normalize_data(leaders)
-        return templates.TemplateResponse("leaderboard.html", {"leaders": processedleaders, "request": request})
+        return templates.TemplateResponse("fullleaderboard.html", {"leaders": processedleaders, "request": request})
     except Exception as e:
         print(e)
         return templates.TemplateResponse("error.html", {"error": e, "request": request})

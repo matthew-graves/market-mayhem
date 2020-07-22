@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+    <head>
+    <meta http-equiv="refresh" content="60"/>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="/static/bootstrap.min.css"/>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-146418431-3"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'UA-146418431-3');
+	</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+    $(document).ready(function(){
+      $("#search").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#leader-table tr").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    });
+    </script>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    </head>
+<html lang="en">
+<body>
+<div class=mx-auto">
+<div class="card-deck" style="float: none; margin-bottom: 10px; margin-top: 10px; justify-content: center">
+  <div class="justify-content-center">
+    <div class="card border-light mb-3" style="max-width: 20rem;">
+        <div class="card-body">
+             <h4 class="card-title">Mayhem Inc. Holdings</h4>
+             <h5 class="card-text">
+                 Companies Held: $Int
+                 <br/>
+                 Mayhem's Cash Value: $Float
+                 <br/>
+                 Total Companies Held: $Int
+                 <br/>
+                 Total Investors: $Int
+                 <br/>
+             </h5>
+        </div>
+    </div>
+  </div>
+  <div class="column">
+        <div class="card border-success mb-3" style="max-width: 20rem;">
+        <div class="card-body">
+             <h4 class="card-title">Biggest Winner</h4>
+              <h5 class="card-text">
+                 Companies Held: $Int
+                 <br/>
+                 Cash Balance: $Float
+                 <br/>
+                 Stock Value: $Int
+                 <br/>
+                 Total Balance: $Int
+                 <br/>
+             </h5>
+        </div>
+    </div>
+  </div>
+  <div class="column">
+        <div class="card border-danger mb-3" style="max-width: 20rem;">
+        <div class="card-body">
+             <h4 class="card-title">Biggest GUH</h4>
+               <h5 class="card-text">
+                 Companies Held: $Int
+                 <br/>
+                 Cash Balance: $Float
+                 <br/>
+                 Stock Value: $Int
+                 <br/>
+                 Total Balance: $Int
+                 <br/>
+             </h5>
+        </div>
+    </div>
+  </div>
+  <div class="column">
+        <div class="card border-light mb-3" style="max-width: 20rem;">
+        <div class="card-body">
+             <h4 class="card-title">Recent Changes</h4>
+            <h5 class="card-text">
+                 Version: 0.3
+                 <br/>
+                 Updated Homepage Layout
+                 <br/>
+                 Added Search
+                 <br/>
+                 Added Loserboard
+                 <br/>
+             </h5>
+        </div>
+    </div>
+  </div>
+</div>
+    <table class="table table-hover">
+        <thead>
+        <tr class="table-active">
+            <th style="vertical-align: middle">Ranking</th>
+            <th style="vertical-align: middle">User<input id="search" type="text" placeholder="Search.." autocomplete="off" style="float: right; vertical-align: middle"></th>
+            <th style="vertical-align: middle">Balance</th>
+        </tr>
+        </thead>
+        <tbody id="leader-table">
+        {% for leader in leaders %}
+            {% if (leader[1]) < 100000 %}
+                <tr class="table-active">
+                    <td >{{ loop.index }}</td>
+                    <td ><a href="https://marketmayhem.io/users/{{ leader[0] }}" style="color: #FFFFFF">{{ leader[0] }}</a></td>
+                    <td class="text-danger" >{{ "${:,.2f}".format(leader[1]) }}</td>
+                </tr>
+            {% elif (leader[1]) == 100000 %}
+                <tr class="table-active">
+                    <td >{{ loop.index }}</td>
+                    <td ><a href="https://marketmayhem.io/users/{{ leader[0] }}" style="color: #FFFFFF">{{ leader[0] }}</a></td>
+                    <td style="color: #FFFFFF">{{ "${:,.2f}".format(leader[1]) }}</td>
+                </tr>
+            {% else %}
+                <tr class="table-active">
+                    <td >{{ loop.index }}</td>
+                    <td ><a href="https://marketmayhem.io/users/{{ leader[0] }}" style="color: #FFFFFF">{{ leader[0] }}</a></td>
+                    <td class="text-success">{{ "${:,.2f}".format(leader[1]) }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+<br />
+</div>
+<h4 style="text-align:center">Fund Market Mayhem Development Here</h4>
+<form style="text-align:center" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_s-xclick" />
+<input type="hidden" name="hosted_button_id" value="PT9DWH5DCECEA" />
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+</form>
+</body>
+</html>

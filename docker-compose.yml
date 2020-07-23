@@ -4,7 +4,7 @@ services:
   redis: 
     image: redis:alpine
     volumes:
-      - db-data:/data
+      - ./data:/data
     networks:
       - frontend
 
@@ -28,6 +28,8 @@ services:
       target: http
     networks:
       - frontend
+    ports:
+      - "8000:8000"
     expose:
       - "8000"
     environment:
@@ -51,7 +53,4 @@ services:
 networks:
   # bot-http can be own network
   frontend:
-
-volumes:
-  db-data:
 

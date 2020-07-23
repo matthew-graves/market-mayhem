@@ -1,55 +1,21 @@
 import redismanager
-from trademanager import update_stock_prices
-from datetime import datetime
-from redismanager import update_balances
-import time
+from trademanager import get_quote
 
 
-now = datetime.now()
-current_time = now.strftime("%m/%d/%y %H:%M:%S")
+def update_stock_prices():
+    stocks = redismanager.get_stocks_currently_held()
+    print(stocks)
+    normalized_stocks = []
+    for stock in stocks:
+        stock = stock.decode("utf-8")
+        normalized_stocks += [stock]
+    batchstocks = tuple(normalized_stocks[n:n + 50] for n, i in enumerate(normalized_stocks)
+                        if n % 50 == 0)
+    for stock in batchstocks:
+        currentprice = get_quote(stock)
+        for ticker in currentprice:
+            print(ticker, currentprice[ticker])
+            redismanager.update_stock_cache_price(ticker, currentprice[ticker])
 
-try:
-	update_stock_prices()
-	print("{0} | Prices Successfully Updated".format(current_time))
-except Exception as e:
-	print("{0} | Prices Failed To Update: {1}".format(current_time, e.msg))
 
-now = datetime.now()
-current_time = now.strftime("%m/%d/%y %H:%M:%S")
-
-try:
-        update_balances()
-        print("{0} | Balances Successfully Updated".format(current_time))
-except Exception as e:
-        print("{0} | Balances Failed To Update: {1}".format(current_time, e.msg))
-
-now = datetime.now()
-current_time = now.strftime("%m/%d/%y %H:%M:%S")
-
-time.sleep(15)
-
-try:
-        update_balances()
-        print("{0} | Balances Successfully Updated".format(current_time))
-except Exception as e:
-        print("{0} | Balances Failed To Update: {1}".format(current_time, e.msg))
-
-now = datetime.now()
-current_time = now.strftime("%m/%d/%y %H:%M:%S")
-
-time.sleep(15)
-try:
-        update_balances()
-        print("{0} | Balances Successfully Updated".format(current_time))
-except Exception as e:
-        print("{0} | Balances Failed To Update: {1}".format(current_time, e.msg))
-
-now = datetime.now()
-current_time = now.strftime("%m/%d/%y %H:%M:%S")
-
-time.sleep(15)
-try:
-        update_balances()
-        print("{0} | Balances Successfully Updated".format(current_time))
-except Exception as e:
-        print("{0} | Balances Failed To Update: {1}".format(current_time, e.msg))
+update_stock_prices()

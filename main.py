@@ -170,7 +170,16 @@ async def generate_leaderboard(request: Request, leaders: int):
     try:
         leaders = redismanager.get_leaders(int(leaders) - 1)
         processedleaders = normalize_data(leaders)
-        return templates.TemplateResponse("leaderboard.html", {"leaders": processedleaders, "request": request})
+        leader = redismanager.get_leader_stats()
+        loser = redismanager.get_loser_stats()
+        redismanager.update_stats_total_unique_companies()
+        redismanager.update_stats_user_count()
+        stats = redismanager.get_usage_stats()
+        mayhemvalue = redismanager.get_mayhem_value()
+        return templates.TemplateResponse("fullleaderboard.html", {"leaders": processedleaders, "leader": leader,
+                                                                   "loser": loser, "request": request, "stats": stats,
+                                                                   "mayhemvalue": mayhemvalue,
+                                                                   "url": "dev.marketmayhem.io"})
     except Exception as e:
         print(e)
         return templates.TemplateResponse("error.html", {"error": e, "request": request})
@@ -182,6 +191,26 @@ async def generate_loserboard(request: Request, losers: int):
         losers = redismanager.get_losers(int(losers) - 1)
         processedlosers = normalize_data(losers)
         return templates.TemplateResponse("loserboard.html", {"losers": processedlosers, "request": request})
+    except Exception as e:
+        print(e)
+        return templates.TemplateResponse("error.html", {"error": e, "request": request})
+
+
+@app.get("/bottom/{losers}")
+async def generate_loserboard(request: Request, losers: int):
+    try:
+        losers = redismanager.get_losers(int(losers) - 1)
+        processedlosers = normalize_data(losers)
+        return templates.TemplateResponse("loserboard.html", {"losers": processedlosers, "request": request})
+    except Exception as e:
+        print(e)
+        return templates.TemplateResponse("error.html", {"error": e, "request": request})
+
+
+@app.get("/donate")
+async def donate_page(request: Request):
+    try:
+        return templates.TemplateResponse("donate.html", {"request": request})
     except Exception as e:
         print(e)
         return templates.TemplateResponse("error.html", {"error": e, "request": request})

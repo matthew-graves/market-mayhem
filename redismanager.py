@@ -119,7 +119,7 @@ def update_stock_cache_price(stock, price):
 
 def get_stocks_currently_held():
     validate_online()
-    stocks = r.zrange("activestocks", 0, -1, withscores=True)
+    stocks = r.zrange("activestocks", 0, -1)
     return stocks
 
 

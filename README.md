@@ -24,3 +24,6 @@
 
 See [`samplestart.sh`](samplestart.sh)
 
+---
+
+If the setup steps have run successfully, then you should be able to go http://localhost:8000 and see the site running. Additionally, you should be able to use the `!marketmayhem` and related commands in the Twitch chat room.

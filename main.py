@@ -46,7 +46,8 @@ async def users(request: Request, username: str):
                 if share[0] == sharevalue[0]:
                     sharevalues += [sharevalue]
         print(sharevalues)
-        return templates.TemplateResponse("userinfo.html", {"cash": cash, "shares": shares, "total": total, "request": request, "sharevalues": sharevalues})
+        return templates.TemplateResponse("userinfo.html", {"cash": cash, "shares": shares, "total": total,
+                                                            "request": request, "sharevalues": sharevalues})
     except Exception as e:
         return templates.TemplateResponse("error.html", {"error": e, "request": request})
 
@@ -191,7 +192,16 @@ async def home_page(request: Request):
     try:
         leaders = redismanager.get_leaders(-1)
         processedleaders = normalize_data(leaders)
-        return templates.TemplateResponse("fullleaderboard.html", {"leaders": processedleaders, "request": request})
+        leader = redismanager.get_leader_stats()
+        loser = redismanager.get_loser_stats()
+        redismanager.update_stats_total_unique_companies()
+        redismanager.update_stats_user_count()
+        stats = redismanager.get_usage_stats()
+        mayhemvalue = redismanager.get_mayhem_value()
+        return templates.TemplateResponse("fullleaderboard.html", {"leaders": processedleaders, "leader": leader,
+                                                                   "loser": loser, "request": request, "stats": stats,
+                                                                   "mayhemvalue": mayhemvalue,
+                                                                   "url": "dev.marketmayhem.io"})
     except Exception as e:
         print(e)
         return templates.TemplateResponse("error.html", {"error": e, "request": request})

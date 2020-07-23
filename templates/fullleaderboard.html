@@ -33,61 +33,71 @@
     </head>
 <html lang="en">
 <body>
-<div class=mx-auto">
-<div class="card-deck" style="float: none; margin-bottom: 10px; margin-top: 10px; justify-content: center">
-  <div class="justify-content-center">
-    <div class="card border-light mb-3" style="max-width: 20rem;">
+<div class="card-deck" style="margin-bottom: 10px; margin-top: 10px; margin-left: 10px; margin-right: 10px; display: flex;justify-content: center ">
+    <div class="row" style="width: 95%; justify-content: center; align-items: stretch">
+      <div class="col-lg 3 col-md-3 col-sm-12 col-xs-12" >
+    <div class="card border-light m-2">
         <div class="card-body">
              <h4 class="card-title">Mayhem Inc. Holdings</h4>
              <h5 class="card-text">
-                 Companies Held: $Int
+                 Trade Fees Incurred: {{ "${:,.0f}".format(stats[2][1]) }}
                  <br/>
-                 Mayhem's Cash Value: $Float
+                 Mayhem's Cash Value: {{ "${:,.2f}".format(mayhemvalue) }}
                  <br/>
-                 Total Companies Held: $Int
+                 Total Companies Held: {{ "%i" % stats[0][1] }}
                  <br/>
-                 Total Investors: $Int
+                 Total Investors: {{ "%i" % stats[1][1] }}
                  <br/>
              </h5>
         </div>
     </div>
   </div>
-  <div class="column">
-        <div class="card border-success mb-3" style="max-width: 20rem;">
+
+  <div class="col-lg 3 col-md-3 col-sm-12 col-xs-12" >
+      <a href="https://{{ url }}/users/{{ leader[0] }}" style="color: inherit; text-decoration: none;">
+        <div class="card border-success m-2" >
         <div class="card-body">
-             <h4 class="card-title">Biggest Winner</h4>
+             <h4 class="card-title" >Biggest Winner</h4>
               <h5 class="card-text">
-                 Companies Held: $Int
+                 Username: {{ leader[0] }}
                  <br/>
-                 Cash Balance: $Float
+                 Companies Held: {{ "%i" % leader[3] }}
                  <br/>
-                 Stock Value: $Int
+                 Cash Balance: {{ "${:,.2f}".format(leader[1]) }}
                  <br/>
-                 Total Balance: $Int
+                 Stock Value: {{ "${:,.2f}".format(leader[4]) }}
+                 <br/>
+                 Total Balance: {{ "${:,.2f}".format(leader[2]) }}
                  <br/>
              </h5>
         </div>
     </div>
   </div>
-  <div class="column">
-        <div class="card border-danger mb-3" style="max-width: 20rem;">
+  </a>
+
+  <div class="col-lg 3 col-md-3 col-sm-12 col-xs-12" >
+      <a href="https://{{ url }}/users/{{ leader[0] }}" style="color: inherit; text-decoration: none;">
+        <div class="card border-danger m-2">
         <div class="card-body">
              <h4 class="card-title">Biggest GUH</h4>
                <h5 class="card-text">
-                 Companies Held: $Int
+                 Username: {{ loser[0] }}
                  <br/>
-                 Cash Balance: $Float
+                 Companies Held: {{ "%i" % loser[3] }}
                  <br/>
-                 Stock Value: $Int
+                 Cash Balance: {{ "${:,.2f}".format(loser[1]) }}
                  <br/>
-                 Total Balance: $Int
+                 Stock Value: {{ "${:,.2f}".format(loser[4]) }}
+                 <br/>
+                 Total Balance: {{ "${:,.2f}".format(loser[2]) }}
                  <br/>
              </h5>
         </div>
     </div>
   </div>
-  <div class="column">
-        <div class="card border-light mb-3" style="max-width: 20rem;">
+    </a>
+  <div class="col-lg 3 col-md-3 col-sm-12 col-xs-12" >
+        <div class="card border-light m-2" >
         <div class="card-body">
              <h4 class="card-title">Recent Changes</h4>
             <h5 class="card-text">
@@ -104,6 +114,7 @@
     </div>
   </div>
 </div>
+</div>
     <table class="table table-hover">
         <thead>
         <tr class="table-active">
@@ -117,19 +128,19 @@
             {% if (leader[1]) < 100000 %}
                 <tr class="table-active">
                     <td >{{ loop.index }}</td>
-                    <td ><a href="https://marketmayhem.io/users/{{ leader[0] }}" style="color: #FFFFFF">{{ leader[0] }}</a></td>
+                    <td ><a href="https://{{ url }}/users/{{ leader[0] }}" style="color: #FFFFFF">{{ leader[0] }}</a></td>
                     <td class="text-danger" >{{ "${:,.2f}".format(leader[1]) }}</td>
                 </tr>
             {% elif (leader[1]) == 100000 %}
                 <tr class="table-active">
                     <td >{{ loop.index }}</td>
-                    <td ><a href="https://marketmayhem.io/users/{{ leader[0] }}" style="color: #FFFFFF">{{ leader[0] }}</a></td>
+                    <td ><a href="https://{{ url }}/users/{{ leader[0] }}" style="color: #FFFFFF">{{ leader[0] }}</a></td>
                     <td style="color: #FFFFFF">{{ "${:,.2f}".format(leader[1]) }}</td>
                 </tr>
             {% else %}
                 <tr class="table-active">
                     <td >{{ loop.index }}</td>
-                    <td ><a href="https://marketmayhem.io/users/{{ leader[0] }}" style="color: #FFFFFF">{{ leader[0] }}</a></td>
+                    <td ><a href="https://{{ url }}/users/{{ leader[0] }}" style="color: #FFFFFF">{{ leader[0] }}</a></td>
                     <td class="text-success">{{ "${:,.2f}".format(leader[1]) }}</td>
                 </tr>
             {% endif %}
@@ -137,7 +148,7 @@
         </tbody>
     </table>
 <br />
-</div>
+
 <h4 style="text-align:center">Fund Market Mayhem Development Here</h4>
 <form style="text-align:center" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
 <input type="hidden" name="cmd" value="_s-xclick" />

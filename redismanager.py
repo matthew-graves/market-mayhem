@@ -1,6 +1,5 @@
 from usermanager import User, create_user
 import redis
-import pickle
 import os
 
 
@@ -118,7 +117,7 @@ def update_stock_cache_price(stock, price):
     return None
 
 
-def get_count_stocks_currently_held():
+def get_stocks_currently_held():
     validate_online()
     stocks = r.zrange("activestocks", 0, -1, withscores=True)
     return stocks
@@ -153,12 +152,44 @@ def update_stats_total_unique_companies():
     r.zadd("stats", {"unique companies": companycount})
 
 
+def get_mayhem_value():
+    validate_online()
+    stocks = r.zrange("activestocks", 0, -1, withscores=True)
+    stockprices = r.zrange("stockprices", 0, -1, withscores=True)
+    totalvalue = 0
+    for stock in stocks:
+        price = list(filter(lambda x:stock[0] in x, stockprices))
+        totalvalue += (stock[1] * price[0][1])
+    return totalvalue
+
+
 def get_usage_stats():
     validate_online()
     return r.zrange("stats", 0, -1, withscores=True)
 
 
+def get_leader_stats():
+    validate_online()
+    username = r.zrevrange("accountvalue", 0, 0, withscores=True)
+    username = username[0]
+    cash_value = r.zscore("balances", username[0])
+    share_count = r.zcount(username[0], "-inf", "inf")
+    stats = [username[0].decode("utf-8"), cash_value, (username[1] - cash_value), share_count, username[1]]
+    return stats
+
+
+def get_loser_stats():
+    validate_online()
+    username = r.zrange("accountvalue", 0, 0, withscores=True)
+    username = username[0]
+    cash_value = r.zscore("balances", username[0])
+    share_count = r.zcount(username[0], "-inf", "inf")
+    stats = [username[0].decode("utf-8"), cash_value, (username[1] - cash_value), share_count, username[1]]
+    return stats
+
+
 # Private functions
+
 
 def validate_online():
     global r
@@ -176,15 +207,18 @@ def validate_online():
         except Exception as e:
             raise RedisGenericException("Database Is Offline")
 
+
 def open_redis_with_env():
     host = os.getenv('REDIS_HOST', 'localhost')
     return redis.Redis(host=host)
+
 
 def establish_connection():
     global r
     r = open_redis_with_env()
     r.config_set("save", "600 1")
     return r
+
 
 r = None
 r = validate_online()

@@ -12,6 +12,7 @@ app = FastAPI(openapi_url=None)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
+
 def normalize_data(redisarray):
     processedarray = []
     for item in redisarray:
@@ -35,6 +36,9 @@ async def users(request: Request, username: str):
     try:
         sharevalues = []
         cash = redismanager.get_user_cash_balance(username)
+        print(cash)
+        if cash is None:
+            return templates.TemplateResponse("welcome.html", {"request": request})
         shares = redismanager.get_user_share_balance(username)
         total = redismanager.get_user_account_value(username)
         shares = normalize_data(shares)
@@ -45,7 +49,8 @@ async def users(request: Request, username: str):
                 if share[0] == sharevalue[0]:
                     sharevalues += [sharevalue]
         print(sharevalues)
-        return templates.TemplateResponse("userinfo.html", {"cash": cash, "shares": shares, "total": total, "request": request, "sharevalues": sharevalues})
+        return templates.TemplateResponse("userinfo.html", {"cash": cash, "shares": shares, "total": total,
+                                                            "request": request, "sharevalues": sharevalues})
     except Exception as e:
         return templates.TemplateResponse("error.html", {"error": e, "request": request})
 
@@ -99,6 +104,8 @@ async def users(request: Request, ticker: str, amount: int, username: str):
     try:
         redismanager.validate_user_exists(username)
         value = trademanager.get_quote(ticker)
+        if value < 0.01:
+            return "Lowest Supported Price is $0.01"
         cost = value
         cost *= amount
         if trademanager.validate_funds_available(username, cost):
@@ -153,14 +160,14 @@ async def users(request: Request, username: str):
         return templates.TemplateResponse("error.html", {"error": e, "request": request})
 
 
-@app.get("/api/balance/{username}/{balancemod}")
-async def users(request: Request, username: str, balancemod: float):
-    username = username.upper()
-    try:
-        return redismanager.mod_user_balance(username, balancemod)
-    except Exception as e:
-        print(e)
-        return templates.TemplateResponse("error.html", {"error": e, "request": request})
+# @app.get("/api/balance/{username}/{balancemod}")
+# async def users(request: Request, username: str, balancemod: float):
+#     username = username.upper()
+#     try:
+#         return redismanager.mod_user_balance(username, balancemod)
+#     except Exception as e:
+#         print(e)
+#         return templates.TemplateResponse("error.html", {"error": e, "request": request})
 
 
 @app.get("/top/{leaders}")
@@ -168,17 +175,76 @@ async def generate_leaderboard(request: Request, leaders: int):
     try:
         leaders = redismanager.get_leaders(int(leaders) - 1)
         processedleaders = normalize_data(leaders)
-        return templates.TemplateResponse("leaderboard.html", {"leaders": processedleaders, "request": request})
+        leader = redismanager.get_leader_stats()
+        loser = redismanager.get_loser_stats()
+        redismanager.update_stats_total_unique_companies()
+        redismanager.update_stats_user_count()
+        stats = redismanager.get_usage_stats()
+        mayhemvalue = redismanager.get_mayhem_value()
+        return templates.TemplateResponse("fullleaderboard.html", {"leaders": processedleaders, "leader": leader,
+                                                                   "loser": loser, "request": request, "stats": stats,
+                                                                   "mayhemvalue": mayhemvalue,
+                                                                   "url": "marketmayhem.io"})
     except Exception as e:
         print(e)
         return templates.TemplateResponse("error.html", {"error": e, "request": request})
 
-@app.get("/")
-async def generate_leaderboard(request: Request):
+
+@app.get("/bottom/{losers}")
+async def generate_loserboard(request: Request, losers: int):
     try:
-        leaders = redismanager.get_leaders(24)
+        losers = redismanager.get_losers(int(losers) - 1)
+        processedlosers = normalize_data(losers)
+        return templates.TemplateResponse("loserboard.html", {"losers": processedlosers, "request": request})
+    except Exception as e:
+        print(e)
+        return templates.TemplateResponse("error.html", {"error": e, "request": request})
+
+
+@app.get("/bottom/{losers}")
+async def generate_loserboard(request: Request, losers: int):
+    try:
+        losers = redismanager.get_losers(int(losers) - 1)
+        processedlosers = normalize_data(losers)
+        return templates.TemplateResponse("loserboard.html", {"losers": processedlosers, "request": request})
+    except Exception as e:
+        print(e)
+        return templates.TemplateResponse("error.html", {"error": e, "request": request})
+
+
+@app.get("/donate")
+async def donate_page(request: Request):
+    try:
+        return templates.TemplateResponse("donate.html", {"request": request})
+    except Exception as e:
+        print(e)
+        return templates.TemplateResponse("error.html", {"error": e, "request": request})
+
+
+@app.get("/celebration")
+async def celebration_page(request: Request):
+    try:
+        return templates.TemplateResponse("celebration.html", {"request": request})
+    except Exception as e:
+        print(e)
+        return templates.TemplateResponse("error.html", {"error": e, "request": request})
+
+
+@app.get("/")
+async def home_page(request: Request):
+    try:
+        leaders = redismanager.get_leaders(-1)
         processedleaders = normalize_data(leaders)
-        return templates.TemplateResponse("leaderboard.html", {"leaders": processedleaders, "request": request})
+        leader = redismanager.get_leader_stats()
+        loser = redismanager.get_loser_stats()
+        redismanager.update_stats_total_unique_companies()
+        redismanager.update_stats_user_count()
+        stats = redismanager.get_usage_stats()
+        mayhemvalue = redismanager.get_mayhem_value()
+        return templates.TemplateResponse("fullleaderboard.html", {"leaders": processedleaders, "leader": leader,
+                                                                   "loser": loser, "request": request, "stats": stats,
+                                                                   "mayhemvalue": mayhemvalue,
+                                                                   "url": "marketmayhem.io"})
     except Exception as e:
         print(e)
         return templates.TemplateResponse("error.html", {"error": e, "request": request})

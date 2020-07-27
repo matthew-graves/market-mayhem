@@ -1,15 +1,23 @@
 from iexfinance.stocks import Stock
 import redismanager
-from main import normalize_data
+
 
 """
 The official docs recommend using environment variable IEX_TOKEN
 https://addisonlynch.github.io/iexfinance/stable/configuration.html#config-auth
 """
 
+def normalize_data(redisarray):
+    processedarray = []
+    for item in redisarray:
+        processedarray += [(item[0].decode("utf-8"), round(item[1], 2))]
+    return processedarray
+
+
 def get_quote(ticker):
     stonk = Stock(ticker)
     return stonk.get_price()
+
 
 def trade_fee(cost):
     redismanager.trade_fee()
@@ -55,8 +63,15 @@ def get_shares(username):
 
 
 def update_stock_prices():
-    stocks = redismanager.get_count_stocks_currently_held()
-    stocks = normalize_data(stocks)
+    stocks = redismanager.get_stocks_currently_held()
+    normalized_stocks = []
     for stock in stocks:
-        currentprice = get_quote(stock[0])
-        redismanager.update_stock_cache_price(stock[0], currentprice)
+        stock = stock.decode("utf-8")
+        normalized_stocks += [stock]
+    batchstocks = tuple(normalized_stocks[n:n + 99] for n, i in enumerate(normalized_stocks)
+                        if n % 50 == 0)
+    for stock in batchstocks:
+        currentprice = get_quote(stock)
+        for ticker in currentprice:
+            redismanager.update_stock_cache_price(ticker, currentprice[ticker])
+

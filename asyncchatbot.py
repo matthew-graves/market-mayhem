@@ -4,6 +4,7 @@ import aiohttp
 import ast
 import os
 
+
 class Bot(commands.Bot):
 
     def __init__(self, irc_token, api_prefix, channel, nick):
@@ -107,14 +108,15 @@ class Bot(commands.Bot):
             async with aiohttp.ClientSession() as session:
                 r = await self.fetch(session, "/api/stats")
                 r = ast.literal_eval(r)
-                companies = r[0][1]
-                tradefees = r[1][1]
-                usercount = r[2][1]
+                companies = r[1][1]
+                tradefees = r[2][1]
+                usercount = r[0][1]
                 # await ctx.send(r)
                 await ctx.send('Unique Companies Owned: %i, Trade Fees Incurred: %i, Unique User Count: %i' % (companies, tradefees, usercount))
         except Exception as e:
             print(e.message)
             await ctx.send('An Error Occurred Updating Scores')
+
 
 if __name__ == "__main__":
     irc_token = os.getenv('TWITCH_TOKEN', None)

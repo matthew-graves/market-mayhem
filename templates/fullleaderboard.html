@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+    <head>
+    <meta http-equiv="refresh" content="60"/>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="/static/bootstrap.min.css"/>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-146418431-3"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'UA-146418431-3');
+	</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+    $(document).ready(function(){
+      $("#search").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#leader-table tr").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    });
+    </script>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="/static/VerletExpress.js"></script>
+    </head>
+<html lang="en">
+<body>
+<h1 style="align: center; flex-direction: column; justify-content: center; text-align:center"><a href="/celebration" style="inherit: none;"> CONGRATULATIONS ON PARTNER BOOYAH!!!!!</a></h1>
+<div class="card-deck" style="margin-bottom: 10px; margin-top: 10px; margin-left: 10px; margin-right: 10px; display: flex;justify-content: center ">
+    <div class="row" style="width: 95%; justify-content: center; align-items: stretch">
+      <div class="col-lg 3 col-md-3 col-sm-12 col-xs-12" >
+    <div class="card border-light m-2">
+        <div class="card-body">
+             <h4 class="card-title">Mayhem Inc. Holdings</h4>
+             <h5 class="card-text">
+                 Trade Fees Incurred: {{ "${:,.0f}".format(stats[2][1]) }}
+                 <br/>
+                 Mayhem's Cash Value: {{ "${:,.2f}".format(mayhemvalue) }}
+                 <br/>
+                 Total Companies Held: {{ "%i" % stats[1][1] }}
+                 <br/>
+                 Total Investors: {{ leaders|length }}
+                 <br/>
+                 Total Investors Currently Holding Stocks: {{ "%i" % stats[0][1] }}
+                 <br/>
+                 Percent Investors Cash Gang: {{ "{:,.0f}".format(100 - (stats[0][1] // (leaders|length) * 100)) }}%
+                 <br/>
+             </h5>
+        </div>
+    </div>
+  </div>
+
+  <div class="col-lg 3 col-md-3 col-sm-12 col-xs-12" >
+      <a href="https://{{ url }}/users/{{ leader[0] }}" style="color: inherit; text-decoration: none;">
+        <div class="card border-success m-2" >
+        <div class="card-body">
+             <h4 class="card-title" >Biggest Winner</h4>
+              <h5 class="card-text">
+                 Username: {{ leader[0] }}
+                 <br/>
+                 Companies Held: {{ "%i" % leader[3] }}
+                 <br/>
+                 Cash Balance: {{ "${:,.2f}".format(leader[1]) }}
+                 <br/>
+                 Stock Value: {{ "${:,.2f}".format(leader[4]) }}
+                 <br/>
+                 Total Balance: {{ "${:,.2f}".format(leader[2]) }}
+                 <br/>
+             </h5>
+        </div>
+    </div>
+  </div>
+  </a>
+
+  <div class="col-lg 3 col-md-3 col-sm-12 col-xs-12" >
+      <a href="https://{{ url }}/users/{{ leader[0] }}" style="color: inherit; text-decoration: none;">
+        <div class="card border-danger m-2">
+        <div class="card-body">
+             <h4 class="card-title">Biggest GUH</h4>
+               <h5 class="card-text">
+                 Username: {{ loser[0] }}
+                 <br/>
+                 Companies Held: {{ "%i" % loser[3] }}
+                 <br/>
+                 Cash Balance: {{ "${:,.2f}".format(loser[1]) }}
+                 <br/>
+                 Stock Value: {{ "${:,.2f}".format(loser[4]) }}
+                 <br/>
+                 Total Balance: {{ "${:,.2f}".format(loser[2]) }}
+                 <br/>
+             </h5>
+        </div>
+    </div>
+  </div>
+    </a>
+  <div class="col-lg 3 col-md-3 col-sm-12 col-xs-12" >
+        <div class="card border-light m-2" >
+        <div class="card-body">
+             <h4 class="card-title">Recent Changes</h4>
+            <h5 class="card-text">
+                 Version: 0.3
+                 <br/>
+                 Updated Homepage Layout
+                 <br/>
+                 Added Search
+                 <br/>
+                 Added Loserboard
+                 <br/>
+                 Fixed Auto-Enroll Bug
+                 <br/>
+                 Restricted buying to stocks above $0.01
+                 <br/>
+             </h5>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+    <table class="table table-hover">
+        <thead>
+        <tr class="table-active">
+            <th style="vertical-align: middle">Ranking</th>
+            <th style="vertical-align: middle">User<input id="search" type="text" placeholder="Search.." autocomplete="off" style="float: right; vertical-align: middle"></th>
+            <th style="vertical-align: middle">Balance</th>
+        </tr>
+        </thead>
+        <tbody id="leader-table">
+        {% for leader in leaders %}
+            {% if (leader[1]) < 100000 %}
+                <tr class="table-active">
+                    <td >{{ loop.index }}</td>
+                    <td ><a href="https://{{ url }}/users/{{ leader[0] }}" style="color: #FFFFFF">{{ leader[0] }}</a></td>
+                    <td class="text-danger" >{{ "${:,.2f}".format(leader[1]) }}</td>
+                </tr>
+            {% elif (leader[1]) == 100000 %}
+                <tr class="table-active">
+                    <td >{{ loop.index }}</td>
+                    <td ><a href="https://{{ url }}/users/{{ leader[0] }}" style="color: #FFFFFF">{{ leader[0] }}</a></td>
+                    <td style="color: #FFFFFF">{{ "${:,.2f}".format(leader[1]) }}</td>
+                </tr>
+            {% else %}
+                <tr class="table-active">
+                    <td >{{ loop.index }}</td>
+                    <td ><a href="https://{{ url }}/users/{{ leader[0] }}" style="color: #FFFFFF">{{ leader[0] }}</a></td>
+                    <td class="text-success">{{ "${:,.2f}".format(leader[1]) }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+<br />
+
+<h4 style="text-align:center"><a href="/donate"> Fund Market Mayhem Development Here! (We Accept Crypto + Paypal)</a></h4>
+
+</body>
+</html>

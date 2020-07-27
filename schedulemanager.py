@@ -4,6 +4,7 @@ import redismanager
 import trademanager
 
 
+
 def update_stock_prices():
     trademanager.update_stock_prices()
     t = time.localtime()

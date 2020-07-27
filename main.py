@@ -36,6 +36,9 @@ async def users(request: Request, username: str):
     try:
         sharevalues = []
         cash = redismanager.get_user_cash_balance(username)
+        print(cash)
+        if cash is None:
+            return templates.TemplateResponse("welcome.html", {"request": request})
         shares = redismanager.get_user_share_balance(username)
         total = redismanager.get_user_account_value(username)
         shares = normalize_data(shares)
@@ -101,6 +104,8 @@ async def users(request: Request, ticker: str, amount: int, username: str):
     try:
         redismanager.validate_user_exists(username)
         value = trademanager.get_quote(ticker)
+        if value < 0.01:
+            return "Lowest Supported Price is $0.01"
         cost = value
         cost *= amount
         if trademanager.validate_funds_available(username, cost):
@@ -179,7 +184,7 @@ async def generate_leaderboard(request: Request, leaders: int):
         return templates.TemplateResponse("fullleaderboard.html", {"leaders": processedleaders, "leader": leader,
                                                                    "loser": loser, "request": request, "stats": stats,
                                                                    "mayhemvalue": mayhemvalue,
-                                                                   "url": "dev.marketmayhem.io"})
+                                                                   "url": "marketmayhem.io"})
     except Exception as e:
         print(e)
         return templates.TemplateResponse("error.html", {"error": e, "request": request})
@@ -216,6 +221,15 @@ async def donate_page(request: Request):
         return templates.TemplateResponse("error.html", {"error": e, "request": request})
 
 
+@app.get("/celebration")
+async def celebration_page(request: Request):
+    try:
+        return templates.TemplateResponse("celebration.html", {"request": request})
+    except Exception as e:
+        print(e)
+        return templates.TemplateResponse("error.html", {"error": e, "request": request})
+
+
 @app.get("/")
 async def home_page(request: Request):
     try:
@@ -230,7 +244,7 @@ async def home_page(request: Request):
         return templates.TemplateResponse("fullleaderboard.html", {"leaders": processedleaders, "leader": leader,
                                                                    "loser": loser, "request": request, "stats": stats,
                                                                    "mayhemvalue": mayhemvalue,
-                                                                   "url": "dev.marketmayhem.io"})
+                                                                   "url": "marketmayhem.io"})
     except Exception as e:
         print(e)
         return templates.TemplateResponse("error.html", {"error": e, "request": request})
